@@ -1,0 +1,26 @@
+Abstract 
+The Smart Mall QR-Based Store Information System is a web-based digital platform 
+developed to enhance the in-mall shopping experience by providing real-time access to store
+related information through a single QR scan. This system addresses common shopper 
+challenges, such as difficulty locating stores, finding specific products, or being unaware of 
+current promotions. By scanning a QR code placed at key entry or intersection points within 
+the mall, users are instantly directed to a centralized web application that displays all necessary 
+details  including store names, product listings, prices, floor-wise locations, and special offers. 
+At the heart of this system is a robust and scalable architecture built using modern web 
+technologies. The frontend is developed using HTML, CSS, and JavaScript to ensure 
+responsiveness and interactivity, while the backend utilizes Python with Django for smooth 
+data handling and secure server-side operations. An SQLite database manages the store and 
+product information, ensuring fast and reliable access to dynamic content. The system supports 
+core functionalities such as QR code scanning, search and filter options by floor or category, 
+and a dedicated admin panel for updating store data and managing promotions. 
+This platform not only improves navigation and decision-making for shoppers but also serves 
+as a powerful tool for mall administrators to maintain up-to-date information and promote store 
+visibility. By reducing the time and effort spent in physically locating products or offers, the 
+system provides a more organized and engaging shopping journey. It also encourages the 
+integration of digital tools in everyday environments, promoting smart infrastructure within 
+commercial spaces. 
+With emphasis on usability, real-time data access, and ease of maintenance, the Smart Mall 
+QR-Based Store Information System is a forward-thinking solution aimed at transforming 
+traditional mall visits into efficient, informed, and digitally enhanced experiences. As malls 
+continue to grow in size and complexity, this system is designed to scale and adapt, making it 
+a valuable asset for smart retail environments. 
