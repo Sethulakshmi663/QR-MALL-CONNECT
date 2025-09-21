@@ -1,0 +1,302 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ product.name }} - QRConnect</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'products/style.css' %}">
+</head>
+<style>
+  body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  .container {
+    background: rgba(255,255,255,0.95);
+    border-radius: 20px;
+    padding: 30px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
+  }
+  .card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    overflow: hidden;
+  }
+  .card img {
+    transition: transform 0.3s ease;
+  }
+  .card:hover img {
+    transform: scale(1.02);
+  }
+  .btn {
+    border-radius: 10px;
+    font-weight: 500;
+    padding: 10px 20px;
+    transition: all 0.3s ease;
+  }
+  .btn-primary {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    border: none;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+  }
+  .badge {
+    border-radius: 20px;
+    padding: 0.5em 1em;
+  }
+  .qr-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+  }
+  .review-card {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 10px;
+  }
+  .star-rating {
+    color: #ffc107;
+    font-size: 1.2em;
+  }
+  .product-price {
+    color: #28a745;
+    font-size: 1.8em;
+    font-weight: bold;
+  }
+  .product-title {
+    color: #333;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+</style>
+<body>
+
+<div class="container mt-5">
+  <div class="row">
+    
+    <!-- Product Card -->
+    <div class="col-md-6">
+      <div class="card shadow">
+        {% if product.image %}
+          <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+        {% endif %}
+        <div class="card-body">
+          <h3 class="product-title">{{ product.name }}</h3>
+          <p class="product-price">💰 ₹{{ product.price }}</p>
+          <div class="mb-3">
+            <span class="badge bg-info">📍 Floor {{ product.floor }}</span>
+            {% if product.rack_no %}
+              <span class="badge bg-secondary">📎 Rack {{ product.rack_no }}</span>
+            {% endif %}
+            {% if product.category %}
+              <span class="badge bg-primary">🏷️ {{ product.category.name }}</span>
+            {% endif %}
+          </div>
+          <p class="card-text">{{ product.description }}</p>
+
+
+          {% if not product.available %}
+            <p class="text-danger fw-bold">⚠️ This product is currently Sold Out.</p>
+          {% endif %}
+          
+          <!-- QR Code -->
+          <div class="qr-section mt-4">
+            <h6>📱 Quick Access QR Code</h6>
+            <div class="mt-3">
+              <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code" class="img-thumbnail" style="max-width: 180px; border-radius: 10px;">
+              <br>
+              <small class="text-muted d-block mt-2">Scan with your phone to instantly access this product</small>
+              <div class="mt-3">
+                <a href="{% url 'product_qr' product.id %}" class="btn btn-outline-primary btn-sm">💾 Download QR</a>
+                <button onclick="shareProduct()" class="btn btn-outline-success btn-sm">🔗 Share Link</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Offers + Reviews -->
+    <div class="col-md-6">
+      
+      <!-- Offers -->
+      <h3 class="mt-3">🎁 Available Offers</h3>
+      <ul class="list-group mb-4">
+        {% for offer in offers %}
+          <li class="list-group-item">
+            {{ offer.title }} - {{ offer.discount_percent }}% off  
+            <br><small>Valid until {{ offer.valid_until }}</small>
+          </li>
+        {% empty %}
+          <li class="list-group-item">No offers available for this product.</li>
+        {% endfor %}
+      </ul>
+
+      <!-- Reviews -->
+      <h3>📝 Customer Reviews</h3>
+      <div class="mb-3">
+        {% for review in reviews %}
+          <div class="review-card">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <strong>{{ review.name }}</strong>
+                <div class="star-rating">
+                  {% for i in "12345" %}
+                    {% if forloop.counter <= review.rating %}
+                      ⭐
+                    {% else %}
+                      ☆
+                    {% endif %}
+                  {% endfor %}
+                  <span class="text-muted">({{ review.rating }}/5)</span>
+                </div>
+              </div>
+              <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+            </div>
+            <p class="mt-2 mb-0">{{ review.comment }}</p>
+          </div>
+        {% empty %}
+          <div class="text-center text-muted py-4">
+            <p>📝 No reviews yet. Be the first to share your experience!</p>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Add Review Form -->
+      <h4>Leave a Review</h4>
+      <form method="post" class="card p-3 bg-light">
+        {% csrf_token %}
+        <div class="mb-2">
+          <input type="text" name="name" class="form-control" placeholder="Your name">
+        </div>
+        <div class="mb-2">
+          <select name="rating" class="form-select">
+            <option value="5">5⭐</option>
+            <option value="4">4⭐</option>
+            <option value="3">3⭐</option>
+            <option value="2">2⭐</option>
+            <option value="1">1⭐</option>
+          </select>
+        </div>
+        <div class="mb-2">
+          <textarea name="comment" class="form-control" placeholder="Write a review"></textarea>
+        </div>
+        <button type="submit" class="btn btn-success">Submit</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Back Button -->
+  <div class="mt-4">
+    <a href="/" class="btn btn-secondary">⬅ Back to Products</a>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+// Share product functionality
+function shareProduct() {
+    const productName = '{{ product.name|escapejs }}';
+    const productUrl = window.location.href;
+    
+    if (navigator.share) {
+        navigator.share({
+            title: `Check out ${productName} at QRConnect Mall`,
+            text: `Found this great product: ${productName} - ₹{{ product.price }}`,
+            url: productUrl
+        }).catch(err => console.log('Error sharing:', err));
+    } else {
+        // Fallback: copy to clipboard
+        navigator.clipboard.writeText(productUrl).then(() => {
+            showMessage('🔗 Product link copied to clipboard!', 'success');
+        }).catch(() => {
+            // Further fallback: show URL in prompt
+            prompt('Copy this link:', productUrl);
+        });
+    }
+}
+
+// Show message function
+function showMessage(text, type = 'info') {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+    alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 250px;';
+    alertDiv.innerHTML = `
+        ${text}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(alertDiv);
+    
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 3000);
+}
+
+// Track product view (localStorage analytics)
+document.addEventListener('DOMContentLoaded', function() {
+    const productId = {{ product.id }};
+    const productName = '{{ product.name|escapejs }}';
+    
+    // Track in recently viewed
+    let recentlyViewed = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
+    
+    // Remove if already exists and add to beginning
+    recentlyViewed = recentlyViewed.filter(item => item.id !== productId);
+    recentlyViewed.unshift({
+        id: productId,
+        name: productName,
+        price: '{{ product.price }}',
+        timestamp: Date.now()
+    });
+    
+    // Keep only last 10 items
+    recentlyViewed = recentlyViewed.slice(0, 10);
+    
+    localStorage.setItem('recentlyViewed', JSON.stringify(recentlyViewed));
+    
+    // Animate elements on load
+    const cards = document.querySelectorAll('.card, .qr-section, .review-card');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'all 0.6s ease';
+        
+        setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+});
+
+// Form submission enhancement
+document.querySelector('form').addEventListener('submit', function(e) {
+    const submitBtn = document.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting...';
+    
+    // Re-enable after 3 seconds (in case of issues)
+    setTimeout(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+    }, 3000);
+});
+</script>
+</body>
+</html>
