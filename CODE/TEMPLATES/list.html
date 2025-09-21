@@ -1,0 +1,282 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>All Products - QRConnect</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'products/style.css' %}">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .container {
+      background: rgba(255,255,255,0.95);
+      padding: 30px;
+      border-radius: 20px;
+      margin-top: 30px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      backdrop-filter: blur(10px);
+      color: #333;
+    }
+    .card {
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      transition: all 0.3s ease;
+      border: none;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    }
+    .card img {
+      height: 200px;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+    .card:hover img {
+      transform: scale(1.05);
+    }
+    .search-container {
+      background: rgba(255,255,255,0.9);
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+      backdrop-filter: blur(5px);
+    }
+    .form-control, .form-select {
+      border-radius: 10px;
+      border: 2px solid #e0e0e0;
+      transition: all 0.3s ease;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+    .btn {
+      border-radius: 10px;
+      padding: 8px 20px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    .btn-primary {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      border: none;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    .badge {
+      font-size: 0.75em;
+      padding: 0.5em 0.8em;
+      border-radius: 20px;
+    }
+    .page-title {
+      color: #fff;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2.5rem;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    .product-count {
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+    }
+    .loading-spinner {
+      display: none;
+      text-align: center;
+      margin: 20px 0;
+    }
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+<!-- 🔑 Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">🏢 QRConnect</a>
+   
+    <div class="d-flex ms-auto">
+      <span class="navbar-text text-light">Mall Product Navigation System</span>
+    </div>
+  </div>
+ 
+</nav>
+<nav>
+    <a href="admin" class="navbar-text">Admin login</a>
+</nav>
+
+<h1 class="page-title">🛍️ Smart Product Catalog</h1>
+
+<div class="container">
+  <!-- Search & Filters -->
+  <div class="search-container">
+    <h5 class="mb-3">🔍 Find Your Products</h5>
+    <form method="get" id="searchForm">
+    <div class="row g-3">
+      <!-- Search -->
+      <div class="col-md-4">
+        <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Search products...">
+      </div>
+      
+      <!-- Category Filter -->
+      <div class="col-md-2">
+        <select name="category" class="form-select">
+          <option value="">All Categories</option>
+          {% for category in categories %}
+            <option value="{{ category.id }}" {% if category.id|stringformat:"s" == selected_category %}selected{% endif %}>
+              {{ category.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      
+      
+      
+      <!-- Search Button -->
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">🔍 Search</button>
+      </div>
+    </div>
+    </form>
+  </div>
+  
+  <!-- Loading Spinner -->
+  <div class="loading-spinner" id="loadingSpinner">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Searching products...</p>
+  </div>
+  
+  <!-- Product Count -->
+  <div class="product-count">
+    Found {{ products|length }} product{{ products|length|pluralize }} {% if q %}for "{{ q }}"{% endif %}
+  </div>
+
+  <!-- Products Grid -->
+  <div class="row">
+    {% for product in products %}
+      <div class="col-md-4 mb-4">
+        <div class="card">
+          {% if product.image %}
+            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+          {% endif %}
+          <div class="card-body text-dark">
+            <h5 class="card-title">
+              {{ product.name }}
+              {% if not product.available %}
+                <span class="badge bg-danger">Sold Out</span>
+              {% endif %}
+            </h5>
+            {% if product.category %}
+              <p class="text-muted small mb-2">🏷️ {{ product.category.name }}</p>
+            {% endif %}
+            <p class="card-text"><strong>₹{{ product.price }}</strong> <br> 🏢 Floor: {{ product.floor }}</p>
+            {% if product.available %}
+              <a href="{% url 'product_detail' product.id %}" class="btn btn-success btn-sm">View Details</a>
+            {% else %}
+              <button class="btn btn-secondary" disabled>Not Available</button>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p>No products found.</p>
+    {% endfor %}
+  </div>
+</div> <!-- ✅ properly closed container -->
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+// Enhanced search functionality
+document.getElementById('searchForm').addEventListener('submit', function(e) {
+    document.getElementById('loadingSpinner').style.display = 'block';
+});
+
+// Auto-submit form on filter change
+document.querySelectorAll('select, input[type="number"]').forEach(element => {
+    element.addEventListener('change', function() {
+        document.getElementById('searchForm').submit();
+    });
+});
+
+// Smooth scroll animations
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate cards on scroll
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+    
+    // Observe all product cards
+    document.querySelectorAll('.col-md-4').forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'all 0.6s ease';
+        observer.observe(card);
+    });
+});
+
+// Add to favorites (localStorage)
+function addToFavorites(productId, productName) {
+    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    
+    if (!favorites.some(item => item.id === productId)) {
+        favorites.push({id: productId, name: productName, timestamp: Date.now()});
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+        
+        // Show success message
+        showMessage('❤️ Added to favorites!', 'success');
+    } else {
+        showMessage('📝 Already in favorites!', 'info');
+    }
+}
+
+// Show message function
+function showMessage(text, type = 'info') {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+    alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 250px;';
+    alertDiv.innerHTML = `
+        ${text}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(alertDiv);
+    
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 3000);
+}
+</script>
+
+
+</body>
+</html>
