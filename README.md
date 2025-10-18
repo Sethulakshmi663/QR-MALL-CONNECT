@@ -1,10 +1,31 @@
-# QR-MALL-CONNECT
-# 🏬 Smart Mall QR-Based Product Information System
+🌟 Overview
 
-1. **📲 QR-Based Access** – Shoppers scan a single QR code placed inside the mall to instantly access product details including names, prices, and floor locations.  
+💡 Django-based web app that lets shoppers instantly view product details by scanning a single QR code.
 
-2. **🔎 Product Search** – A real-time search function allows users to quickly find products, saving time and reducing confusion.  
+🚀 Simplifies mall navigation, product search, and real-time updates for shoppers and admins.
 
-3. **⭐ User Reviews** – Customers can share reviews of the product, helping others make better shopping decisions.  
+🎯 Key Benefits
 
-4. **🛠️ Admin Panel** – Mall administrators can update product details, prices, and availability through a secure backend, ensuring accurate and up-to-date information.  
+⚡ Instant Access – Scan once to see all product details
+
+⏱️ Time-Saving – Real-time search & quick navigation
+
+🔁 Live Updates – Admins can edit data instantly
+
+⭐ User Reviews – Helps others make informed choices
+
+🧭 Easy Navigation – Reduces confusion inside the mall
+
+🧩 Core Features
+
+🛍️ Smart Product Discovery – Browse, search, and filter products with full details
+
+🔍 Advanced Search – Filter by category or price in real-time
+
+📱 QR Code Integration – Each product has a unique QR for instant access
+
+📝 Reviews & Offers – Ratings, comments, and live offers display
+
+⚙️ Admin Control – Manage products, categories, and reviews in real-time
+
+🎨 Modern UI/UX – Responsive, fast, and mobile-friendly interface
