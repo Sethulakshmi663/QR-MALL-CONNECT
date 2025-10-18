@@ -1,10 +1,10 @@
-🌟 Overview
+              🌟 Overview
 
 💡 Django-based web app that lets shoppers instantly view product details by scanning a single QR code.
 
 🚀 Simplifies mall navigation, product search, and real-time updates for shoppers and admins.
 
-🎯 Key Benefits
+              🎯 Key Benefits
 
 ⚡ Instant Access – Scan once to see all product details
 
@@ -16,7 +16,7 @@
 
 🧭 Easy Navigation – Reduces confusion inside the mall
 
-🧩 Core Features
+              🧩 Core Features
 
 🛍️ Smart Product Discovery – Browse, search, and filter products with full details
 
