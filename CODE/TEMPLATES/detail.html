@@ -89,28 +89,36 @@
     
     <!-- Product Card -->
     <div class="col-md-6">
-      <div class="card shadow">
-        {% if product.image %}
-          <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+  <div class="card shadow">
+    {% if product.image %}
+      <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+    {% endif %}
+    <div class="card-body">
+      <h3 class="product-title">{{ product.name }}</h3>
+      <p class="product-price">💰 ₹{{ product.price }}</p>
+
+      <div class="mb-3">
+        <span class="badge bg-info">📍 Floor {{ product.floor }}</span>
+        
+        {% if product.rack_no %}
+          <span class="badge bg-secondary">📎 Rack {{ product.rack_no }}</span>
         {% endif %}
-        <div class="card-body">
-          <h3 class="product-title">{{ product.name }}</h3>
-          <p class="product-price">💰 ₹{{ product.price }}</p>
-          <div class="mb-3">
-            <span class="badge bg-info">📍 Floor {{ product.floor }}</span>
-            {% if product.rack_no %}
-              <span class="badge bg-secondary">📎 Rack {{ product.rack_no }}</span>
-            {% endif %}
-            {% if product.category %}
-              <span class="badge bg-primary">🏷️ {{ product.category.name }}</span>
-            {% endif %}
-          </div>
-          <p class="card-text">{{ product.description }}</p>
+        
+        {% if product.category %}
+          <span class="badge bg-primary">🏷️ {{ product.category.name }}</span>
+        {% endif %}
 
+        {% if product.location %}
+          <span class="badge bg-warning text-dark">📌 Location: {{ product.location }}</span>
+        {% endif %}
+      </div>
 
-          {% if not product.available %}
-            <p class="text-danger fw-bold">⚠️ This product is currently Sold Out.</p>
-          {% endif %}
+      <p class="card-text">{{ product.description }}</p>
+
+      {% if not product.available %}
+        <p class="text-danger fw-bold">⚠️ This product is currently Sold Out.</p>
+      {% endif %}
+
           
           <!-- QR Code -->
           <div class="qr-section mt-4">
